@@ -9,9 +9,9 @@ pipeline {
         }
       }
     }
-    stage('Push image') {
+     stage('Push image') {
       withDockerRegistry([ credentialsId: "docker-hub-credentials", url: "" ]) {
-      bat "docker push devopsglobalmedia/teamcitydocker:build"
+      bat "docker push benjamito/jenkinsprueba:latest"
       }
     }
   }
