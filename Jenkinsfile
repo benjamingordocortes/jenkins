@@ -5,7 +5,7 @@ pipeline {
     stage('docker build') {
       steps {
         script {
-          sh "docker build -f Dockerfile -t benjamito/nginxpage:latest"
+          sh "docker build -f Dockerfile -t benjamito/nginxpage:latest ."
         }
       }
     }
