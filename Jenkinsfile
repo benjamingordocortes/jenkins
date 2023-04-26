@@ -1,28 +1,28 @@
-pipeline{
-    agent any
-    options{
-        buildDiscarder(logRotator(numToKeepStr: '5', daysToKeepStr: '5'))
-        timestamps()
-    }
-    environment{
-        
-        registry = "benjamito/jenkinsprueba"
-        registryCredential = 'docker-hub-credentials'        
-    }
-    
-    stages{
-       stage('Building image') {
-      steps{
+pipeline {
+  agent any
+  
+  environment {
+    DOCKER_HUB_REGISTRY = "docker.io"
+    DOCKER_HUB_REPO = "benjamito/jenkinsprueba"
+    DOCKER_HUB_CREDENTIALS = credentials("docker-hub-credentials")
+    DOCKER_IMAGE_NAME = "${DOCKER_HUB_REGISTRY}/${DOCKER_HUB_REPO}"
+    DOCKER_IMAGE_TAG = "latest"
+  }
+  
+  stages {
+    stage("Build Docker image") {
+      steps {
         script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+          docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", ".")
         }
       }
     }
-       stage('Deploy Image') {
-      steps{
-         script {
-            docker.withRegistry( '', registryCredential ) {
-            dockerImage.push()
+    
+    stage("Push Docker image") {
+      steps {
+        script {
+          docker.withRegistry("${DOCKER_HUB_REGISTRY}", "${DOCKER_HUB_CREDENTIALS}") {
+            docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").push()
           }
         }
       }
