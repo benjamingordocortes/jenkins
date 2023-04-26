@@ -1,49 +1,20 @@
 pipeline {
-
-  environment {
-    dockerimagename = "benjamito/nginxjenkins"
-    dockerImage = ""
-  }
-
   agent any
 
-  stages {
-
-    stage('Checkout Source') {
-      steps {
-        git 'https://github.com/benjamingordocortes/jenkins.git'
-      }
-    }
-
-    stage('Build image') {
-      steps{
-        script {
-          dockerImage = docker.build dockerimagename
-        }
-      }
-    }
-
-    stage('Pushing Image') {
-      environment {
-               registryCredential = 'dockerhub-credentials'
-           }
-      steps{
-        script {
-          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-            dockerImage.push("latest")
-          }
-        }
-      }
-    }
-
-    stage('Deploying nginx container to Kubernetes') {
+  stages{
+    stage('docker build') {
       steps {
         script {
-          kubernetesDeploy(configs: "deployment.yaml", "svc.yaml")
+          sh "docker build -f Dockerfile -t benjamito/nginxpage:latest ."
         }
       }
     }
-
+    stage('docker push') {
+      steps {
+        script {
+          sh "docker push benjamito/nginxpage:latest"
+        }
+      }
+    }
   }
-
 }
