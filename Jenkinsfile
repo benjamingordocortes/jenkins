@@ -3,9 +3,9 @@ pipeline {
   
   environment {
     DOCKER_HUB_REGISTRY = "docker.io"
-    DOCKER_HUB_REPO = "benjamito/jenkinsprueba"
+    DOCKER_HUB_REPO = "benjamito"
     DOCKER_HUB_CREDENTIALS = credentials("docker-hub-credentials")
-    DOCKER_IMAGE_NAME = "${DOCKER_HUB_REGISTRY}/${DOCKER_HUB_REPO}"
+    DOCKER_IMAGE_NAME = "${DOCKER_HUB_REPO}/jenkinsprueba"
     DOCKER_IMAGE_TAG = "latest"
   }
   
