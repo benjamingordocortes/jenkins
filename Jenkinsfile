@@ -17,15 +17,20 @@ pipeline {
         }
       }
     }
-    
+    stage('login'){
+      steps{
+        sh "echo ${DOCKER_HUB_CREDENTIALS} | docker login -u ${DOCKER_HUB_REPO} --password-stdin"
+      }
+    }
     stage("Push Docker image") {
       steps {
-        script {
-          withDockerRegistry(credentialsId: 'docker-hub-credentials', url: '') {
-            docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").push()
-          }
-        }
+        sh "docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
       }
+    }
+  }
+  post{
+    always{
+      sh 'docker logout'
     }
   }
 }
