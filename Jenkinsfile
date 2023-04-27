@@ -1,36 +1,36 @@
 pipeline {
-  agent any
-  
   environment {
-    DOCKER_HUB_REGISTRY = "docker.io"
-    DOCKER_HUB_REPO = "benjamito"
-    DOCKER_HUB_CREDENTIALS = credentials("docker-hub-credentials")
-    DOCKER_IMAGE_NAME = "${DOCKER_HUB_REPO}/jenkinsprueba"
-    DOCKER_IMAGE_TAG = "latest"
+    registry = "benjamito/jenkinsprueba"
+    registryCredential = 'docker-hub-credentials'
+    dockerImage = ''
   }
-  
+  agent any
   stages {
-    stage("Build Docker image") {
+    stage('Cloning Git') {
       steps {
+        git 'https://github.com/benjamingordocortes/jenkins.git'
+      }
+    }
+    stage('Building image') {
+      steps{
         script {
-          docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", ".")
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
         }
       }
     }
-    stage('login'){
+    stage('Deploy Image') {
       steps{
-        sh "echo ${DOCKER_HUB_CREDENTIALS} | docker login -u ${DOCKER_HUB_REPO} --password-stdin"
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+          }
+        }
       }
     }
-    stage("Push Docker image") {
-      steps {
-        sh "docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $registry:$BUILD_NUMBER"
       }
-    }
-  }
-  post{
-    always{
-      sh 'docker logout'
     }
   }
 }
