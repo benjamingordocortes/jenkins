@@ -28,10 +28,9 @@ pipeline {
       }
     }
     stage('Deploy to Kubernetes') {
-        steps {
-            sh 'kubectl apply -f deploy.yaml'
-        }
+      steps {
+        sh 'kubectl apply -f deploy.yaml'
+      }
     }
-}
   }
 }
