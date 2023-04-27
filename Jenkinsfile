@@ -27,5 +27,11 @@ pipeline {
         sh "docker rmi $registry:$BUILD_NUMBER"
       }
     }
+    stage('Deploy to Kubernetes') {
+        steps {
+            sh 'kubectl apply -f deploy.yaml'
+        }
+    }
+}
   }
 }
