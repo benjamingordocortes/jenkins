@@ -29,6 +29,7 @@ pipeline {
     }
     stage('Deploy to Kubernetes') {
       steps {
+        sh 'kubectl config use-context kind-cluster'
         sh 'kubectl apply -f deploy.yaml'
       }
     }
