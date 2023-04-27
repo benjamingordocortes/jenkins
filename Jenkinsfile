@@ -6,14 +6,14 @@ pipeline {
   }
   agent any
   stages {
-    stage('Building image') {
+    stage('Contruyendo imagen') {
       steps{
         script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+          dockerImage = docker.build registry
         }
       }
     }
-    stage('Deploy Image') {
+    stage('Subiendo imagen a repositorio') {
       steps{
         script {
           docker.withRegistry( '', registryCredential ) {
@@ -22,12 +22,7 @@ pipeline {
         }
       }
     }
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $registry:$BUILD_NUMBER"
-      }
-    }
-    stage('Apply Kubernetes files') {
+    stage('Deploy de imagen') {
       steps{
         script{
           withKubeConfig([credentialsId: 'mykubeconfig', serverUrl: 'https://192.168.0.32:61310']) {
