@@ -26,6 +26,7 @@ pipeline {
       steps{
         script{
           withKubeConfig([credentialsId: 'mykubeconfig', serverUrl: 'https://192.168.0.32:61310']) {
+            sh 'kubectl config use-context jenkins'
             sh 'kubectl apply -f deploy.yaml'
           }
         }
