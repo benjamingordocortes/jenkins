@@ -25,7 +25,7 @@ pipeline {
     stage('Deploy de imagen') {
       steps{
         script{
-          withKubeConfig([credentialsId: 'mykubeconfig', serverUrl: 'https://192.168.0.32:61310']) {
+          withKubeConfig([credentialsId: 'mykubeconfig', serverUrl: 'https://192.168.0.100:34689']) {
             sh 'kubectl apply -f deploy.yaml'
           }
         }
